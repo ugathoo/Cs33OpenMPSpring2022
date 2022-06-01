@@ -46,8 +46,8 @@ for(int i = 1; i < rows; i++){
 #pragma omp parallel for private(j,k,l) 
   for(int i = 1; i < rows-TILESIZE; i += TILESIZE){
       for(j = 1; j < cols - TILESIZE; j+= TILESIZE){
-	for (int k = i; k < i + TILESIZE; k++){
-	  for(int l = j; l < j + TILESIZE; l++){
+	for (k = i; k < i + TILESIZE; k++){
+	  for(l = j; l < j + TILESIZE; l++){
 	    int64_t idx = k * cols + l;                                                       
                      
 	    int64_t idxNW = idx - cols - 1;                                                  
