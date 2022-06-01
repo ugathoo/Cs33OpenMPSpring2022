@@ -16,7 +16,7 @@ for(int i = 1; i < rows; i++){
       int r = ref[idx];                                                                                                                                                          
       int inputNW = input[idxNW];                                                                                                                                                
       int inputW = input[idxW];                                                                                                                                                  
-      int inputN = input[idxN];                                                                                                                                                                                                                                                                           input[idx] = maximum(inputNW + r, inputW - penalty, inputN - penalty);   
+      int inputN = input[idxN];                                                                                                                                                                                                             input[idx] = maximum(inputNW + r, inputW - penalty, inputN - penalty);   
     }
  }
 
@@ -42,11 +42,10 @@ for(int i = 1; i < rows; i++){
 }*/ 
 
  int TILESIZE = 4;
- int j, initialI;
-#pragma omp parallel for private(j, initialI) 
+ int j, k, l;
+#pragma omp parallel for private(j,k,l) 
   for(int i = 1; i < rows-TILESIZE; i += TILESIZE){
-    for(initialI = i; initialI > 0; initialI--){
-      for(j = 1; j <= initialI; j++){
+      for(j = 1; j < cols - TILESIZE; j+= TILESIZE){
 	for (int k = i; k < i + TILESIZE; k++){
 	  for(int l = j; l < j + TILESIZE; l++){
 	    int64_t idx = k * cols + l;                                                       
@@ -65,6 +64,8 @@ for(int i = 1; i < rows; i++){
     }
   }
 }
+
+
 /*#pragma omp parallel for collapse(3)
  for (int i = 1; i < rows; i++) {
     for(int initialI = i; initialI > 0; initialI--){
@@ -84,6 +85,8 @@ for(int i = 1; i < rows; i++){
     }
  }
 }*/
+
+
  /* #pragma parallel for collapse(2)
   for (int i = 1; i < rows; ++i) {
     for (int j = 1; j < cols; ++j) {
