@@ -1,5 +1,5 @@
 #include <omp.h>
-
+#include<stdio.h>
 #include "kernel.h"
 
 void kernel_omp(int *input, int *ref, int64_t rows, int64_t cols, int penalty) {
@@ -42,16 +42,16 @@ for(int i = 1; i < rows; i++){
 }*/ 
 
  int TILESIZE = 4;
- int j, k, l;
-#pragma omp parallel for private(j,k,l) 
-  for(int i = 1; i < rows-TILESIZE; i += TILESIZE){
-      for(j = 1; j < cols - TILESIZE; j+= TILESIZE){
+ int i, k, l;
+ for(int j = 1; j < cols-TILESIZE; j += TILESIZE){
+    #pragma omp parallel for private (k,l)
+    for(i = 1; i <= j; i+= TILESIZE){
 	for (k = i; k < i + TILESIZE; k++){
 	  for(l = j; l < j + TILESIZE; l++){
-	    int64_t idx = k * cols + l;                                                       
-                     
-	    int64_t idxNW = idx - cols - 1;                                                  
-	    int64_t idxN = idx - cols;                                                       
+	    int64_t idx = k * cols + l;           
+	    int sub = idx - cols;
+	    int64_t idxNW = sub - 1;                                                  
+	    int64_t idxN = sub;                                                       
 	    int64_t idxW = idx - 1;                                                          
 	    int r = ref[idx];                                                                
 	    int inputNW = input[idxNW];                                                      
@@ -61,8 +61,7 @@ for(int i = 1; i < rows; i++){
 	  }
 	}
       }
-    }
-  }
+   }
 }
 
 
