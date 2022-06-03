@@ -6,32 +6,31 @@
 void kernel_omp(int *input, int *ref, int64_t rows, int64_t cols, int penalty) {
   const int TILESIZE = 128;
   int j,k,l; 
-  for(int i = 1; i <= rows - TILESIZE; i += TILESIZE){
+  for(int i = 1; i < rows; i += TILESIZE){
     int m = i;
-    for(j = 1; m <= j; j += TILESIZE){
-      for (k = m; k < m + TILESIZE; ++k){                                                                                                                                                                                            
-	for(l = j; l < j + TILESIZE; ++l){                                                                                                                                                                                           
-	  int64_t idx = k * cols + l;                                                                                                                                                                                               
-	  int sub = idx - cols;                                                                                                                                                                                                      
-	  int64_t idxNW = sub - 1;                                                                                                                                                                                                   
-	  int64_t idxN = sub;                                                                                                                                                                                                        
-	  int64_t idxW = idx - 1;                                                                                                                                                                                                    
+    for(j = 1; m > 0; j += TILESIZE){
+      for (k = m; k < m + TILESIZE; ++k){                                                                                                                                        
+	for(l = j; l < j + TILESIZE; ++l){                                                                                                                                        
+	  int64_t idx = k * cols + l;                                                                                                                                             	  int sub = idx - cols;                                                                                                                                                   
+	  int64_t idxNW = sub - 1;                                                                                                                                                
+	  int64_t idxN = sub;                                                                                                                                                    
+	  int64_t idxW = idx - 1;                                                                                                                                                                  
 	  int r = ref[idx];                                                                                                                                                                                                          
 	  int inputNW = input[idxNW];                                                                                                                                                                                                
 	  int inputW = input[idxW];                                                                                                                                                                                                  
 	  int inputN = input[idxN];                                                                                                                                                                                                  
 	  input[idx] = maximum(inputNW + r, inputW - penalty, inputN - penalty);                                                                                                                                                     
-	}                                                                                                                                                                                                                            
-	} 
+	}                                                                                                                                                                                                                             
+      }
       printf("(%d,%d)\n", m,j);
-      m += TILESIZE;
+      m -= TILESIZE;
     }
   }
 
     int x,y,z;
-    for(int j = 1 + TILESIZE; j <= cols-TILESIZE; j+= TILESIZE){
+    for(int j = 1 + TILESIZE; j <= cols; j+= TILESIZE){
       int n = j;
-      for(x = rows-TILESIZE; n <= x; x-= TILESIZE){
+      for(x = rows; x <= n; x-= TILESIZE){
        	for (y = x; y < x + TILESIZE; ++y){                                                                                                                                                                                                    for(z = n; z < n + TILESIZE; ++z){                                                                                                                                                                                          
             int64_t idx = y * cols + z;                                                                                                                                                                                      
             int sub = idx - cols;                                                                                                                                                                                                                 int64_t idxNW = sub - 1;                                                                                                                                                                                                  
